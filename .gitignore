@@ -1,0 +1,7 @@
+venv/
+secret.key
+private_key.pem
+public_key.pem
+*.encrypted
+*.decrypted
+_pycache_/
