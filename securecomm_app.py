@@ -37,6 +37,15 @@ class SecureComm:
             print(f"Key saved to {filename}")
         except PermissionError:
             print(f"Error: Permission denied writing to {filename}")
+            
+    def load_fernet_key(self, filename="secret.key"):
+        """Load an existing Fernet key from a file into this object."""
+        try:
+            with open(filename, "rb") as key_file:
+                self.fernet_key = key_file.read()
+            print(f"Fernet key loaded from {filename}")
+        except FileNotFoundError:
+            print(f"Error: '{filename}' not found. Generate a key first or check the filename.")
 
     def generate_rsa_keys(self):
         """Generate RSA private and public key pair, store in this object."""
@@ -223,14 +232,15 @@ class SecureComm:
             print("       SECURECOMM MAIN MENU")
             print("=" * 40)
             print("1. Generate Fernet key")
-            print("2. Generate RSA key pair")
-            print("3. Load existing RSA keys")
-            print("4. Encrypt a text message")
-            print("5. Decrypt a text message")
-            print("6. Sign a message")
-            print("7. Verify a signature")
-            print("8. Encrypt a file")
-            print("9. Decrypt a file")
+            print("2. Load existing Fernet key")
+            print("3. Generate RSA key pair")
+            print("4. Load existing RSA keys")
+            print("5. Encrypt a text message")
+            print("6. Decrypt a text message")
+            print("7. Sign a message")
+            print("8. Verify a signature")
+            print("9. Encrypt a file")
+            print("10. Decrypt a file")
             print("0. Exit")
 
             choice = input("Choose an option: ").strip()
@@ -240,19 +250,22 @@ class SecureComm:
                 self.save_fernet_key()
 
             elif choice == "2":
+                self.load_fernet_key()
+
+            elif choice == "3":
                 self.generate_rsa_keys()
                 self.save_rsa_keys()
 
-            elif choice == "3":
+            elif choice == "4":
                 self.load_rsa_keys()
 
-            elif choice == "4":
+            elif choice == "5":
                 msg = input("Enter message to encrypt: ")
                 result = self.encrypt_text(msg)
                 if result:
                     print(f"Encrypted: {result}")
 
-            elif choice == "5":
+            elif choice == "6":
                 print("Note: paste encrypted bytes exactly as shown, including b'...'")
                 enc_input = input("Enter encrypted message: ")
                 try:
@@ -263,7 +276,7 @@ class SecureComm:
                 except Exception:
                     print("Error: Invalid encrypted message format.")
 
-            elif choice == "6":
+            elif choice == "7":
                 msg = input("Enter message to sign: ")
                 sig = self.sign_message(msg)
                 if sig:
@@ -271,18 +284,18 @@ class SecureComm:
                     self.last_signature = sig
                     self.last_signed_message = msg
 
-            elif choice == "7":
+            elif choice == "8":
                 if hasattr(self, "last_signature"):
                     is_valid = self.verify_signature(self.last_signed_message, self.last_signature)
                     print(f"Signature valid: {is_valid}")
                 else:
                     print("Error: No signature created yet in this session.")
 
-            elif choice == "8":
+            elif choice == "9":
                 filename = input("Enter filename to encrypt: ").strip()
                 self.encrypt_file(filename)
 
-            elif choice == "9":
+            elif choice == "10":
                 filename = input("Enter filename to decrypt: ").strip()
                 self.decrypt_file(filename)
 
